@@ -1,18 +1,21 @@
-from Serializable import Serializable
-
-ser = Serializable("json", "test.json")
-
-# test 1
-print(ser.read_file())
+from Serialization import *
 
 
-class A(object):
+class A:
     def __init__(self):
-        super(A, self).__init__()
-
         self.num = 1
-        self.second_num = 2
+        self.second_num = 5
+
+    def method(self):
+        pass
 
 
-a = A()
-print (dir(a))
+class B(A):
+    def __init__(self):
+        super(B, self).__init__()
+
+        self.ob = A()
+
+
+print(Serialization.get_json_object(B()))
+
