@@ -1,4 +1,5 @@
-from Serialization import *
+from Serialization import Serialization as ser
+import json
 
 
 class A:
@@ -10,12 +11,19 @@ class A:
         pass
 
 
+a = A()
+
+
 class B(A):
     def __init__(self):
         super(B, self).__init__()
 
-        self.ob = A()
+        self.ob = a
 
 
-print(Serialization.get_json_object(B()))
+b = B()
+
+ser.save_to_file(a, "test1.json", True)
+ser.save_to_file(b, "test1.json")
+
 
