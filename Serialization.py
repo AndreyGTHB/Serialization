@@ -13,7 +13,7 @@ class Serialization(abc.ABC):
                 if obj == link[0]:
                     return "$#&% @ser ?obj " + "id=" + str(link[1])
 
-        Serialization.links.append((obj, Serialization.population))
+        Serialization.links.append((obj, id(obj)))
 
         dict_of_obj = obj.__dict__
 
