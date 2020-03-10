@@ -11,14 +11,14 @@ class Serialization(abc.ABC):
         if use_id:
             for link in Serialization.links:
                 if obj == link[0]:
-                    return "$#&% @ser ?obj " + "id=" + str(link[1])
+                    return "$#&% @ser type?obj " + "id=" + str(link[1])
 
         Serialization.links.append((obj, id(obj)))
 
         dict_of_obj = obj.__dict__
 
-        dict_of_obj['id'] = Serialization.population
-        dict_of_obj['class'] = str(obj.__class__.__name__)
+        dict_of_obj['$#&% @ser id'] = Serialization.population
+        dict_of_obj['$#&% @ser class'] = str(obj.__class__.__name__)
         Serialization.population += 1
 
         for key in dict_of_obj:
@@ -31,7 +31,7 @@ class Serialization(abc.ABC):
         return dict_of_obj
 
     @staticmethod
-    def save_to_file(obj, path_to_file, clear_file=False, use_id=True):
+    def save_to_file(obj: object, path_to_file: str, clear_file: bool = False, use_id: bool = True) -> None:
         obj_dict = Serialization.get_json_object(obj, use_id)
 
         if clear_file:
@@ -48,3 +48,23 @@ class Serialization(abc.ABC):
 
         with open(path_to_file, "w") as file_object:
             json.dump(obj_from_file, file_object)
+
+    @staticmethod
+    def get_py_object(json_object, module: str):
+        """
+        This method will not work
+         if there are no default values
+         for the arguments in the constructor
+         of the deserialized class.
+        """
+
+        exec("from " + module + " import *")
+
+        obj = None
+        exec("obj =" + json_object["$#&% @ser class"] + "()")
+
+        for key in json_object:
+            if key != "$#&% @ser id" and key != "$#&% @ser class":
+                exec("obj." + key + "=" + str(json_object[key]))
+
+        return obj
