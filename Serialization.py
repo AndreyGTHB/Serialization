@@ -11,14 +11,14 @@ class Serialization(abc.ABC):
         if use_id:
             for link in Serialization.links:
                 if obj == link[0]:
-                    return "$#&% @ser type?obj " + "id=" + str(link[1])
+                    return "$&%_@link_id=" + str(link[1])
 
         Serialization.links.append((obj, id(obj)))
 
         dict_of_obj = obj.__dict__
 
-        dict_of_obj['$#&% @ser id'] = Serialization.population
-        dict_of_obj['$#&% @ser class'] = str(obj.__class__.__name__)
+        dict_of_obj['$&%_id'] = id(obj)
+        dict_of_obj['$&%_class'] = str(obj.__class__.__name__)
         Serialization.population += 1
 
         for key in dict_of_obj:
@@ -50,7 +50,7 @@ class Serialization(abc.ABC):
             json.dump(obj_from_file, file_object)
 
     @staticmethod
-    def get_py_object(json_object, module: str):
+    def get_py_object(json_object: dict, module: str):
         """
         This method will not work
          if there are no default values
@@ -58,13 +58,22 @@ class Serialization(abc.ABC):
          of the deserialized class.
         """
 
-        exec("from " + module + " import *")
+        def my_import(name):
+            components = name.split('.')
+            mod = __import__(components[0])
+            for comp in components[1:]:
+                mod = getattr(mod, comp)
+            return mod
 
-        obj = None
-        exec("obj =" + json_object["$#&% @ser class"] + "()")
+        cclass = my_import(f"{module}.{json_object['$&%_class']}")
+        py_obj = cclass()
 
         for key in json_object:
-            if key != "$#&% @ser id" and key != "$#&% @ser class":
-                exec("obj." + key + "=" + str(json_object[key]))
+            if key != "$&%_id" and key != "$&%_class":
+                setattr(py_obj, key, json_object[key])
 
-        return obj
+        return py_obj
+
+    @staticmethod
+    def load_object_from_file(path_to_file: str, path_to_class: str):
+        pass
