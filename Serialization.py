@@ -65,8 +65,8 @@ class Serialization(abc.ABC):
                 mod = getattr(mod, comp)
             return mod
 
-        cclass = my_import(f"{module}.{json_object['$&%_class']}")
-        py_obj = cclass()
+        klass = my_import(f"{module}.{json_object['$&%_class']}")
+        py_obj = klass()
 
         for key in json_object:
             if key != "$&%_id" and key != "$&%_class":
@@ -75,5 +75,20 @@ class Serialization(abc.ABC):
         return py_obj
 
     @staticmethod
-    def load_object_from_file(path_to_file: str, path_to_class: str):
-        pass
+    def load_object_from_file(path_to_file: str, module_with_class: str):
+        with open(path_to_file, 'r') as file_obj:
+            json_obj = json.load(file_obj)
+        py_object = Serialization.get_py_object(json_obj, module_with_class)
+
+        return py_object
+
+
+
+
+
+
+
+
+
+
+
